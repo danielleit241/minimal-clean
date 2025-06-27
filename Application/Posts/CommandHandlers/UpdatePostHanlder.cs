@@ -14,11 +14,10 @@ namespace Application.Posts.CommandHandlers
         }
         public async Task<Post?> Handle(UpdatePost request, CancellationToken cancellationToken)
         {
-            var post = await _postRepo.GetPostById(request.PostId);
-            if (post == null)
+            var post = new Post
             {
-                return null;
-            }
+                Content = request.PostContent,
+            };
             return await _postRepo.UpdatePost(request.PostId, post);
         }
     }

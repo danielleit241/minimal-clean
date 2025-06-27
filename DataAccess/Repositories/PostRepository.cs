@@ -51,7 +51,7 @@ namespace DataAccess.Repositories
             {
                 return null;
             }
-            postUpdated.Content = postUpdated.Content;
+            postUpdated.Content = post.Content;
             postUpdated.UpdatedAt = DateTime.UtcNow;
             _context.Posts.Update(postUpdated);
             await _context.SaveChangesAsync();
