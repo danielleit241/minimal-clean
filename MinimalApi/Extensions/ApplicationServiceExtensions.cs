@@ -1,10 +1,12 @@
-﻿using Application.Abstractions;
+﻿using System.Reflection;
+using Application.Abstractions;
 using Application.Posts.Commands;
 using Asp.Versioning;
 using DataAccess;
 using DataAccess.Repositories;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using MinimalApi.Abstractions;
 
 namespace MinimalApi.Booststrapping
 {
@@ -29,6 +31,17 @@ namespace MinimalApi.Booststrapping
             builder.Services.AddScoped<IPostRepository, PostRepository>();
             builder.Services.AddMediatR(typeof(CreatePost));
             return builder;
+        }
+
+        public static void RegisterEndpointDefinitions(this IHostApplicationBuilder builder, Assembly assembly)
+        {
+            var types = assembly.ExportedTypes
+                .Where(t => typeof(IEndpointDefinition).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract);
+
+            foreach (var type in types)
+            {
+                builder.Services.AddScoped(typeof(IEndpointDefinition), type);
+            }
         }
     }
 }
