@@ -4,6 +4,7 @@ using Domain.Models;
 using MediatR;
 using Microsoft.AspNetCore.Http.HttpResults;
 using MinimalApi.Abstractions;
+using MinimalApi.Filters;
 
 namespace MinimalApi.EndpointDefinitions
 {
@@ -20,10 +21,12 @@ namespace MinimalApi.EndpointDefinitions
                .WithName("GetPostById");
 
             v1.MapPost("", CreatePost)
-                .WithName("CreatePost");
+                .WithName("CreatePost")
+                .AddEndpointFilter<PostValidationFilter>();
 
             v1.MapPut("/{id}", UpdatePost)
-                .WithName("UpdatePost");
+                .WithName("UpdatePost")
+                .AddEndpointFilter<PostValidationFilter>();
 
             v1.MapDelete("/{id}", DeletePost)
                 .WithName("DeletePost");
@@ -69,7 +72,7 @@ namespace MinimalApi.EndpointDefinitions
             var updatePost = new UpdatePost
             {
                 PostId = id,
-                PostContent = post.Content ?? string.Empty
+                PostContent = post.Content?.Trim() ?? string.Empty
             };
             var updatedPost = await mediator.Send(updatePost);
             if (updatedPost == null)
